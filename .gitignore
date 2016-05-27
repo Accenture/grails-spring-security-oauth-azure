@@ -1,0 +1,12 @@
+.DS_Store
+.classpath
+.project
+.settings/
+.idea/
+plugins/
+web-app/WEB-INF/
+target-eclipse/
+target/
+out/
+*.iml
+grails-rt.jar
