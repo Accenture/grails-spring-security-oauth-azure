@@ -23,6 +23,7 @@ import grails.converters.JSON
 class AzureSpringSecurityOAuthService {
 
     def oauthService
+    def grailsApplication
 
     /*
      * Requires scope of "https://www.googleapis.com/auth/userinfo.email"
@@ -42,7 +43,23 @@ class AzureSpringSecurityOAuthService {
             log.error "No userPrincipalName from Azure. Response:\n${response.body}"
             throw new OAuthLoginException('No userPrincipalName from Azure')
         }
-        return new AzureOAuthToken(accessToken, user.userPrincipalName)
+        def userMemberOf = oauthService.getAzureResource(accessToken,
+                "https://graph.windows.net/myorganization/users/${user.objectId}/memberOf?api-version=1.6");
+        def groupList
+        try {
+            groupList = JSON.parse(userMemberOf.body)
+        } catch (Exception e) {
+            log.error "Error parsing response from Azure. Response:\n${response.body}\n${response.headers}"
+            throw new OAuthLoginException('Error parsing response from Azure', e)
+        }
+        def groups = []
+        def groupMap = grailsApplication.config.oauth.providers.azure.groupMap
+        if (groupList?.value) {
+            groups = groupList.value.collect { groupItem ->
+                groupMap ? groupMap[groupItem.displayName]:groupItem.displayName
+            }
+        }
+        return new AzureOAuthToken(accessToken, user.userPrincipalName, groups)
     }
 
 }

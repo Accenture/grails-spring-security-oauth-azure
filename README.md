@@ -35,6 +35,7 @@ oauth {
       api = org.grails.plugin.springsecurity.oauth.GoogleApi20
       key = 'azure_ad_clientID'
       secret = 'azure_ad_secretKey'
+      tenant = 'azure_tenant_UUID'
       successUri = '/oauth/azure/success'
       failureUri = '/oauth/azure/error'
       callback = "${baseURL}/oauth/azure/callback"
@@ -78,7 +79,7 @@ You can look at [bagage's sample app][sample-app].
 Copyright and license
 ---------------------
 
-Copyright 2012-2014 Mihai Cazacu, Enrico Comiti and Alexey Zhokhov under the [Apache License, Version 2.0](LICENSE). Supported by [AZ][zhokhov].
+Copyright 2012-2014 Mihai Cazacu, Enrico Comiti and Alexey Zhokhov under the [Apache License, Version 2.0](LICENSE). 
 
 [zhokhov]: http://www.zhokhov.com
 [spring-security-oauth-plugin]: https://github.com/enr/grails-spring-security-oauth

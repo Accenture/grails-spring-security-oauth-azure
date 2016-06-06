@@ -16,6 +16,7 @@
 package grails.plugin.springsecurity.oauth
 
 import org.scribe.model.Token
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 /**
  * OAuth authentication token for Azure AD users. It's a standard {@link OAuthToken}
@@ -29,12 +30,23 @@ class AzureOAuthToken extends OAuthToken {
 
     public static final String PROVIDER_NAME = 'azure'
 
+    String[] groups
+
     String email
 
-    AzureOAuthToken(Token scribeToken, email) {
+    AzureOAuthToken(Token scribeToken, email, groups) {
         super(scribeToken)
         this.email = email
         this.principal = email
+        this.groups = groups
+        groups.each { group ->
+            if (group) {
+                if(!this.authorities) {
+                    this.authorities = new ArrayList<>();
+                }
+                this.authorities.add(new SimpleGrantedAuthority(group))
+            }
+        }
     }
 
     String getSocialId() {
@@ -56,5 +68,10 @@ class AzureOAuthToken extends OAuthToken {
     String getProviderName() {
         PROVIDER_NAME
     }
+
+    String[] getGroups() {
+        return groups
+    }
+
 
 }
